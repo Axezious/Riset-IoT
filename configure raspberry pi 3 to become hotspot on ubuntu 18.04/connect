@@ -1,0 +1,78 @@
+step 1 install
+apt-get update
+apt-get upgrade
+apt-get install dnsmasq hostapd
+sudo systemctl stop dnsmasq
+sudo systemctl stop hostapd
+
+step 2 Set Static IP Address
+nano /etc/dhcpcd.conf
+tambahkan script dibawah ini:
+denyinterfaces wlan0
+
+nano /etc/network/interfaces
+tambahkan script dibawah ini:
+
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+
+allow-hotplug wlan0
+iface wlan0 inet static
+    address 192.168.5.1
+    netmask 255.255.255.0
+    network 192.168.5.0
+    broadcast 192.168.5.255
+    
+step 3 Configure Hostapd
+nano /etc/hostapd/hostapd.conf
+tambahkan script dibawah ini:
+
+interface=wlan0
+ssid=MyPiAP (boleh diganti)
+hw_mode=g
+channel=6
+ieee80211n=1
+wmm_enabled=1
+ht_capab=[HT40][SHORT-GI-20][DSSS_CCK-40]
+macaddr_acl=0
+auth_algs=1
+ignore_broadcast_ssid=0
+wpa=2
+wpa_key_mgmt=WPA-PSK
+wpa_passphrase=raspberry (boleh diganti)
+rsn_pairwise=CCMP
+
+nano /etc/default/hostapd
+temukan #DAEMON_CONF, kemudian hapus "#" dan tambahkan script seperti dibawah ini
+DAEMON_CONF="/etc/hostapd/hostapd.conf"
+
+step 4 Configure Dnsmasq
+mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
+nano /etc/dnsmasq.conf
+masukkan script dibawah ini:
+interface=wlan0 
+listen-address=192.168.5.1
+dhcp-range=192.168.5.100,192.168.5.200,24h
+
+now start hostapd and dnsmasq
+
+systemctl unmask hostapd
+systemctl enable hostapd
+systemctl start hostapd
+
+systemctl unmask dnsmasq
+systemctl enable dnsmasq
+systemctl start dnsmasq
+
+apabila dnsmasq failed active, maka ubah file yang ada di /etc/systemd/resolved.conf
+cari #DNSStubListener=yes ubah menjadi DNSStubListener=no
+
+terakhir ubah file yang ada di /etc/sysctl.conf
+cari #net.ipv4.ip_forward=1, hapus tanda '#'.
+
+sumber 
+https://www.raspberrypi.org/documentation/configuration/wireless/access-point.md
+https://learn.sparkfun.com/tutorials/setting-up-a-raspberry-pi-3-as-an-access-point/all
