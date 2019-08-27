@@ -1,0 +1,275 @@
+Menampilkan hasil sensor ke LCD
+langkah pertama 
+download library i2c untuk LCD manage library
+sketch-include library-manage library - pilih i2c esp8266
+
+1. Sensor LDR
+
+#include <LiquidCrystal_I2C.h>
+
+// set the LCD number of columns and rows
+int lcdColumns = 16;
+int lcdRows = 2;
+
+// set LCD address, number of columns and rows
+// if you don't know your display address, run an I2C scanner sketch
+LiquidCrystal_I2C lcd(0x3F, lcdColumns, lcdRows); 
+int sensorValue;
+ 
+void setup()
+{
+  lcd.init();
+  // turn on LCD backlight                      
+  lcd.backlight();
+  lcd.setCursor(1,0);
+  // print message
+  lcd.print("INTENSITY LIGHT");
+  lcd.setCursor(9,1);
+  lcd.print(" cd");
+  
+  Serial.begin(9600); // starts the serial port at 9600
+}
+ 
+void loop()
+{
+  sensorValue = analogRead(A0); // read analog input pin 0
+  Serial.print(sensorValue, DEC); // prints the value read
+  Serial.print(" \n"); // prints a space between the numbers
+  // wait 100ms for next reading
+  lcd.setCursor(4,1);
+  lcd.print(sensorValue);
+  delay(1000); 
+  
+}
+2. Sensor LM35
+
+#include <LiquidCrystal_I2C.h>
+
+// set the LCD number of columns and rows
+int lcdColumns = 16;
+int lcdRows = 2;
+
+// set LCD address, number of columns and rows
+// if you don't know your display address, run an I2C scanner sketch
+LiquidCrystal_I2C lcd(0x3F, lcdColumns, lcdRows); 
+int sensorValue;
+ 
+void setup()
+{
+  lcd.init();
+  // turn on LCD backlight                      
+  lcd.backlight();
+  lcd.setCursor(1,0);
+  // print message
+  lcd.print("TEMPERATURE");
+  lcd.setCursor(7,1);
+  lcd.print("C");
+  lcd.setCursor(12,1);
+  lcd.print("F");
+  
+  Serial.begin(9600); // starts the serial port at 9600
+}
+ 
+void loop()
+{
+ int rawvoltage= analogRead(outputpin);
+float millivolts= (rawvoltage/1024.0) * 3300;
+float celsius= millivolts/10;
+Serial.print(celsius);
+Serial.print(" degrees Celsius, ");
+ 
+Serial.print((celsius * 9)/5 + 32);
+Serial.println(" degrees Fahrenheit");
+lcd.setCursor(2,1);
+lcd.print(celsius);
+lcd.setCursor(9,1);
+lcd.print((celsius * 9)/5 + 32);
+delay(1000);  
+}
+3. Sensor Ultrasonik
+#include <LiquidCrystal_I2C.h>
+// set the LCD number of columns and rows
+int lcdColumns = 16;
+int lcdRows = 2;
+// set LCD address, number of columns and rows
+// if you don't know your display address, run an I2C scanner sketch
+LiquidCrystal_I2C lcd(0x3F, lcdColumns, lcdRows); 
+#define echoPin D7 // Echo Pin
+#define trigPin D6 // Trigger Pin
+long duration, distance; 
+void setup()
+{
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  lcd.init();
+  // turn on LCD backlight                      
+  lcd.backlight();
+  lcd.clear();
+  lcd.setCursor(1,0);
+  // print message
+  lcd.print("  DISTANCE");
+  lcd.setCursor(9,1);
+  lcd.print(" cm");
+  Serial.begin(9600); // starts the serial port at 9600
+ 
+}
+ 
+void loop()
+{
+ digitalWrite(trigPin, LOW);
+ delayMicroseconds(2);
+ digitalWrite(trigPin, HIGH);
+ delayMicroseconds(10);
+ digitalWrite(trigPin, LOW);
+ duration = pulseIn(echoPin, HIGH);
+//Calculate the distance (in cm) based on the speed of sound.
+distance = duration/58.2;
+Serial.println(distance);
+ lcd.setCursor(4,1);
+ lcd.print(distance);
+ delay(50); 
+  
+}
+3. Sensor DHT
+#include "DHT.h"
+#define DHTPIN D4     // what pin we're connected to
+#define DHTTYPE DHT11   // DHT 22  (AM2302)
+#include <LiquidCrystal_I2C.h>
+int lcdColumns = 16;
+int lcdRows = 2;
+DHT dht(DHTPIN, DHTTYPE);
+LiquidCrystal_I2C lcd(0x3F, lcdColumns, lcdRows);
+void setup() 
+{
+  lcd.init();
+  // turn on LCD backlight                      
+  lcd.backlight();
+  lcd.clear();
+  lcd.setCursor(9,0);
+  // print message
+  lcd.print(" C");
+  lcd.setCursor(9,1);
+  lcd.print(" %");
+  Serial.begin(9600);
+  Serial.println("DHTxx test!");
+  dht.begin();
+}
+void loop() 
+{
+  // Wait a few seconds between measurements.
+ // delay(2000);
+ 
+  float h = dht.readHumidity();
+  float t = dht.readTemperature();
+  float f = dht.readTemperature(true);
+  //delay(2000);
+  // Check if any reads failed and exit early (to try again).
+  if (isnan(h) || isnan(t) || isnan(f)) 
+  {
+    Serial.println("Failed to read from DHT sensor!");
+    return;
+  }
+  
+  
+  Serial.print("Humidity: ");
+  Serial.print(h);
+  Serial.print(" %\t");
+  Serial.print("Temperature: ");
+  Serial.print(t);
+  Serial.print(" *C ");
+  Serial.print(f);
+  Serial.println(" *F");
+  lcd.setCursor(4,0);
+  lcd.print(t);
+  lcd.setCursor(4,1);
+  lcd.print(h);
+  delay(2000);
+}
+4. Sensor DHT dan PH
+
+#include "DHT.h"
+#define DHTPIN D4     // what pin we're connected to
+#define DHTTYPE DHT11   // DHT 22  (AM2302)
+#include <LiquidCrystal_I2C.h>
+int lcdColumns = 16;
+int lcdRows = 2;
+DHT dht(DHTPIN, DHTTYPE);
+LiquidCrystal_I2C lcd(0x3F, lcdColumns, lcdRows);
+const int analogInPin = A0; 
+int sensorValue = 0; 
+unsigned long int avgValue; 
+float b;
+int buf[10],temp;
+void setup() {
+   lcd.init();
+  // turn on LCD backlight                      
+  lcd.backlight();
+  lcd.clear();
+  lcd.setCursor(7,0);
+  // print message
+  lcd.print(" C");
+  lcd.setCursor(7,1);
+  lcd.print(" %");
+  lcd.setCursor(13,0);
+  lcd.print(" ");
+ Serial.begin(9600);
+ Serial.println("DHTxx test!");
+ dht.begin();
+}
+ 
+void loop() {
+  float h = dht.readHumidity();
+  float t = dht.readTemperature();
+  float f = dht.readTemperature(true);
+  //delay(2000);
+  // Check if any reads failed and exit early (to try again).
+  if (isnan(h) || isnan(t) || isnan(f)) 
+  {
+    Serial.println("Failed to read from DHT sensor!");
+    return;
+  }
+ for(int i=0;i<10;i++) 
+ { 
+  buf[i]=analogRead(analogInPin);
+  delay(10);
+ }
+ for(int i=0;i<9;i++)
+ {
+  for(int j=i+1;j<10;j++)
+  {
+   if(buf[i]>buf[j])
+   {
+    temp=buf[i];
+    buf[i]=buf[j];
+    buf[j]=temp;
+   }
+  }
+ }
+ avgValue=0;
+ for(int i=2;i<8;i++)
+ avgValue+=buf[i];
+ float pHVol=(float)avgValue*5.0/1024/6;
+ float phValue = -5.70 * pHVol + 21.34;
+ Serial.print("sensor = ");
+ Serial.println(phValue);
+ 
+  Serial.print("Humidity: ");
+  Serial.print(h);
+  Serial.print(" %\t");
+  Serial.print("Temperature: ");
+  Serial.print(t);
+  Serial.print(" *C ");
+  Serial.print(f);
+  Serial.println(" *\F");
+  Serial.print("sensor = ");
+  Serial.println(phValue);
+  lcd.setCursor(2,0);
+  lcd.print(t);
+  lcd.setCursor(2,1);
+  lcd.print(h);
+  delay(2000);
+  lcd.setCursor(9,0);
+  lcd.print(phValue);
+  delay(20);
+  
+}
