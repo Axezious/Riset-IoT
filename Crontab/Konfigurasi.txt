@@ -1,0 +1,28 @@
+Cara Pertama
+----------------------------------------------------------------------------------------------------------------
+(1) Buka crontab
+# nano /etc/crontab
+
+(2) Tambahkan baris berikut pada akhir file. perintah ini akan menjalankan script xShell setiap 2 menit
+*/2 *   * * *   root    bash /root/code_python/xShell.sh
+
+(3) Simpan file tersebut
+(4) Restart service crontab
+# /etc/init.d/cron restart
+
+----------------------------------------------------------------------------------------------------------------
+
+Cara Kedua
+----------------------------------------------------------------------------------------------------------------
+(1) Buka crontab
+# crontab -e
+
+(2) Tambahkan baris berikut pada akhir file. perintah ini akan menjalankan script xShell setiap 2 menit
+*/2 *   * * *   root    bash /root/code_python/xShell.sh
+
+(3) Simpan file tersebut
+(4) Restart service crontab
+# /etc/init.d/cron restart
+
+(5) Melihat daftar job yang telah masuk ke crontab
+# crontab -l
