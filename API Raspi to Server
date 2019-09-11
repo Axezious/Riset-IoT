@@ -1,0 +1,18 @@
+<?php
+
+// ************* Get Data From MariaDB
+$ms = "MS02.hum";
+$data = "30";
+
+// ************* Call API:
+$processed = FALSE;
+$ERROR_MESSAGE = '';
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, "http://31.220.48.158/projects/iotgateway/raspi02/apiInsertMS02_hum_mysql.php?MS=$ms&hum=$data");
+curl_setopt($ch, CURLOPT_POST, 1);// set post data to true
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$json = curl_exec($ch);
+curl_close ($ch);
+// ************* 
+
+?>
