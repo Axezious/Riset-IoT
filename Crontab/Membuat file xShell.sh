@@ -1,7 +1,7 @@
 (1) Buat file xShell.sh dengan editor nano
 # nano xShell.sh
 
-(2) Isi file xShell.sh
+(2) Isi file xShell.sh dengan script berikut
 #!/bin/sh
 python /root/code_python/stomp-receive-multi.py
 
