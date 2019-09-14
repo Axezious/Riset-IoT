@@ -1,0 +1,6 @@
+apt-get update
+apt-get install vsftpd
+service vsftpd status
+
+langkah konfigurasi : 
+https://devanswers.co/installing-ftp-server-vsftpd-ubuntu-16-04-17-04/
