@@ -25,6 +25,9 @@ sudo systemctl stop mysql
 
 // restart the database server without permission checking using the following command:
 sudo mysqld_safe --skip-grant-tables &
+// apabila terjadi salah pengtikan pada plugin
+killall mysqld_safe
+killall mysqld
 
 //Next, login to your MySQL/MariaDB server as root user:
 mysql
