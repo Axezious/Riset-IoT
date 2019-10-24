@@ -3,10 +3,10 @@
 //Step 1: Install software-properties-common if missing:
 sudo apt-get install software-properties-common
 
-//Step 2: Import MariaDB gpg key:
+//Step 2: Import MariaDB gpg key: || ini bisa dilewatkan saja bila terjadi error
 sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
 
-//Step 3: Add the apt repository
+//Step 3: Add the apt repository || ini bisa dilewatkan saja bila terjadi error
 sudo add-apt-repository "deb [arch=amd64,arm64,ppc64el] http://mariadb.mirror.liquidtelecom.com/repo/10.4/ubuntu $(lsb_release -cs) main"
 
 //Step 4: Install MariaDB
