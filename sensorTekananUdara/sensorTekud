@@ -61,7 +61,7 @@ void setup()
   lcd.init();
   // turn on LCD backlight                      
   lcd.backlight();
-  lcd.setCursor(1,0);
+  lcd.setCursor(2,0);
   // print message
   lcd.print("Tekanan Udara");
   lcd.setCursor(9,1);
